@@ -3,9 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
+import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot({ autoSchemaFile: 'schema.gql', sortSchema: true }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
