@@ -3,11 +3,17 @@
 # ------------------------------------------------------
 
 type Chat {
-  buyer: User!
+  buyer: User
+  deal: Deal
   id: ID!
-  messages: [Message!]!
+  messages: [Message!]
   post: Post!
-  seller: User!
+  seller: User
+}
+
+input CreateUserInput {
+  phoneNumber: Float!
+  userName: String!
 }
 
 """
@@ -17,12 +23,16 @@ scalar DateTime
 
 type Deal {
   adress: String!
+  agreement: Boolean!
   buyer: User!
+  chat: Chat
   dateTime: DateTime!
   id: ID!
+  isCompleted: Boolean!
   Latitude: Float!
   Longitude: Float!
   post: Post!
+  review: Review
   seller: User!
 }
 
@@ -40,6 +50,7 @@ type Message {
 }
 
 type Mutation {
+  create(createUserData: CreateUserInput!): User!
   remove(id: String!): Boolean!
 }
 
@@ -50,9 +61,7 @@ type Post {
   deal: Deal
   descrioption: String!
   id: ID!
-  Latitude: Float!
   likes: [Like!]
-  Longitude: Float!
   pictures: [String!]!
   status: PostStatusEnum!
   title: String!
@@ -72,19 +81,19 @@ enum PostCategoryEnum {
 }
 
 enum PostStatusEnum {
-  Booked
   Hidden
+  OnSale
   SoldOut
 }
 
 type Query {
-  findAll: [User!]!
   findOne(id: String!): User!
 }
 
 type Review {
   buyer: User!
   createdAt: DateTime!
+  deal: Deal!
   id: ID!
   seller: User!
   text: String!

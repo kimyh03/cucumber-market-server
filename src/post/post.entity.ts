@@ -7,18 +7,12 @@ import {
   OneToOne,
   CreateDateColumn,
 } from 'typeorm';
-import {
-  Field,
-  ObjectType,
-  ID,
-  Float,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
 import { Like } from 'src/like/like.entity';
 import { Chat } from 'src/chat/chat.entity';
 import { Deal } from 'src/deal/deal.entity';
-import { PostStatus, PostStatusArray } from './dto/postStatusEnum';
+import { PostStatus } from './dto/postStatusEnum';
 import { PostCategory, PostCategoryArray } from './dto/postCategoryEnum';
 
 enum PostCategoryEnum {
@@ -36,7 +30,7 @@ registerEnumType(PostCategoryEnum, {
 });
 
 enum PostStatusEnum {
-  Booked,
+  OnSale,
   SoldOut,
   Hidden,
 }
@@ -55,20 +49,16 @@ export class Post {
   @Column()
   title: string;
 
-  @Field(() => Float)
-  @Column({ type: 'float', default: 0 })
-  Latitude: number;
-
-  @Field(() => Float)
-  @Column({ type: 'float', default: 0 })
-  Longitude: number;
-
   @Field(() => PostStatusEnum)
-  @Column({ enum: [...PostStatusArray] })
+  @Column({
+    type: 'enum',
+    enum: ['OnSale', 'SoldOut', 'Hidden'],
+    default: 'OnSale',
+  })
   status: PostStatus;
 
   @Field(() => PostCategoryEnum)
-  @Column({ enum: [...PostCategoryArray] })
+  @Column({ type: 'enum', enum: [...PostCategoryArray] })
   category: PostCategory;
 
   @Field()
