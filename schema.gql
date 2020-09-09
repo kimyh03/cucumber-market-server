@@ -3,12 +3,11 @@
 # ------------------------------------------------------
 
 type Chat {
-  buyer: User
   deal: Deal
   id: ID!
   messages: [Message!]
-  post: Post!
-  seller: User
+  paticipants: [User!]!
+  post: Post
 }
 
 input CreateUserInput {
@@ -22,18 +21,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Deal {
-  adress: String!
-  agreement: Boolean!
-  buyer: User!
-  chat: Chat
+  chat: Chat!
   dateTime: DateTime!
   id: ID!
-  isCompleted: Boolean!
-  Latitude: Float!
-  Longitude: Float!
-  post: Post!
-  review: Review
-  seller: User!
+  proposer: User!
 }
 
 type Like {
@@ -44,9 +35,10 @@ type Like {
 
 type Message {
   chat: Chat!
+  createdAt: DateTime!
   id: ID!
   text: String!
-  user: User!
+  user: User
 }
 
 type Mutation {
@@ -58,11 +50,11 @@ type Post {
   category: PostCategoryEnum!
   chats: [Chat!]
   createdAt: DateTime!
-  deal: Deal
   descrioption: String!
   id: ID!
   likes: [Like!]
   pictures: [String!]!
+  reviews: [Review!]
   status: PostStatusEnum!
   title: String!
   user: User!
@@ -91,29 +83,32 @@ type Query {
 }
 
 type Review {
-  buyer: User!
   createdAt: DateTime!
-  deal: Deal!
   id: ID!
-  seller: User!
+  post: Post!
+  rating: Float!
+  recipient: User!
   text: String!
+  writer: User
+  writerType: WriterTypeEnum!
 }
 
 type User {
   avatar: String
-  chatsAsBuyer: [Chat!]
-  chatsAsSeller: [Chat!]
-  dealsAsBuyer: [Deal!]
-  dealsAsSeller: [Deal!]
+  chats: [Chat!]
+  dealsAsPropser: [Deal!]
   id: ID!
   Latitude: Float!
   likes: [Like!]
   Longitude: Float!
   messages: [Message!]
-  phoneNumber: Float!
   posts: [Post!]
-  reviewsAsBuyer: [Review!]
-  reviewsAsSeller: [Review!]
+  reviewsAsRecipient: [Review!]
+  reviewsAsWriter: [Review!]
   userName: String!
-  verificationCode: Float
+}
+
+enum WriterTypeEnum {
+  Buyer
+  Seller
 }

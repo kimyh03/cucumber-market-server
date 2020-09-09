@@ -4,6 +4,8 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
@@ -18,20 +20,17 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.chats)
+  @JoinTable()
+  paticipants: User[];
+
   @Field(() => [Message], { nullable: true })
   @OneToMany(() => Message, (message) => message.chat, { nullable: true })
   messages: Message[];
 
-  @Field(() => User, { nullable: true })
-  @ManyToOne(() => User, (user) => user.chatsAsSeller, { nullable: true })
-  seller: User;
-
-  @Field(() => User, { nullable: true })
-  @ManyToOne(() => User, (user) => user.chatsAsBuyer, { nullable: true })
-  buyer: User;
-
-  @Field(() => Post)
-  @ManyToOne(() => Post, (post) => post.chats)
+  @Field(() => Post, { nullable: true })
+  @ManyToOne(() => Post, (post) => post.chats, { nullable: true })
   post: Post;
 
   @Field(() => Deal, { nullable: true })

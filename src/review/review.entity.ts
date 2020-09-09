@@ -5,11 +5,18 @@ import {
   ManyToOne,
   CreateDateColumn,
   BaseEntity,
-  OneToOne,
 } from 'typeorm';
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
-import { Deal } from 'src/deal/deal.entity';
+import { Post } from 'src/post/post.entity';
+
+enum WriterTypeEnum {
+  Seller,
+  Buyer,
+}
+registerEnumType(WriterTypeEnum, {
+  name: 'WriterTypeEnum',
+});
 
 @ObjectType()
 @Entity()
@@ -22,19 +29,27 @@ export class Review extends BaseEntity {
   @Column()
   text: string;
 
+  @Field()
+  @Column()
+  rating: number;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.reviewsAsWriter, { nullable: true })
+  writer: User;
+
+  @Field(() => WriterTypeEnum)
+  @Column({ type: 'enum', enum: ['Seller', 'Buyer'] })
+  writerType: WriterTypeEnum;
+
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.reviewsAsSeller, {
+  @ManyToOne(() => User, (user) => user.reviewsAsRecipient, {
     onDelete: 'CASCADE',
   })
-  seller: User;
+  recipient: User;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.reviewsAsBuyer, { onDelete: 'CASCADE' })
-  buyer: User;
-
-  @Field(() => Deal)
-  @OneToOne(() => Deal, (deal) => deal.review)
-  deal: Deal;
+  @Field(() => Post)
+  @ManyToOne(() => Post, (post) => post.reviews)
+  post: Post;
 
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })

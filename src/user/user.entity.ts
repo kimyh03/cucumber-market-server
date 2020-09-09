@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToMany,
+} from 'typeorm';
 import { Field, ObjectType, ID, Float } from '@nestjs/graphql';
 import { Review } from 'src/review/review.entity';
 import { Post } from 'src/post/post.entity';
@@ -22,14 +28,6 @@ export class User {
   @Column({ nullable: true })
   avatar: string;
 
-  @Field()
-  @Column()
-  phoneNumber: number;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  verificationCode: number;
-
   @Field(() => Float)
   @Column({ type: 'float', default: 0 })
   Latitude: number;
@@ -38,37 +36,29 @@ export class User {
   @Column({ type: 'float', default: 0 })
   Longitude: number;
 
-  @Field(() => [Review], { nullable: true })
-  @OneToMany(() => Review, (review) => review.seller, { nullable: true })
-  reviewsAsSeller: Review[];
-
-  @Field(() => [Review], { nullable: true })
-  @OneToMany(() => Review, (review) => review.buyer, { nullable: true })
-  reviewsAsBuyer: Review[];
-
   @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.user, { nullable: true })
   posts: Post[];
 
-  @Field(() => [Deal], { nullable: true })
-  @OneToMany(() => Deal, (deal) => deal.buyer, { nullable: true })
-  dealsAsBuyer: Deal[];
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.recipient, { nullable: true })
+  reviewsAsRecipient: Review[];
 
-  @Field(() => [Deal], { nullable: true })
-  @OneToMany(() => Deal, (deal) => deal.seller, { nullable: true })
-  dealsAsSeller: Deal[];
-
-  @Field(() => [Chat], { nullable: true })
-  @OneToMany(() => Chat, (chat) => chat.seller, { nullable: true })
-  chatsAsSeller: Chat[];
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.writer, { nullable: true })
+  reviewsAsWriter: Review[];
 
   @Field(() => [Chat], { nullable: true })
-  @OneToMany(() => Chat, (chat) => chat.buyer, { nullable: true })
-  chatsAsBuyer: Chat[];
+  @ManyToMany(() => Chat, (chat) => chat.paticipants, { nullable: true })
+  chats: Chat[];
 
   @Field(() => [Message], { nullable: true })
   @OneToMany(() => Message, (message) => message.user, { nullable: true })
   messages: Message[];
+
+  @Field(() => [Deal], { nullable: true })
+  @OneToMany(() => Deal, (deal) => deal.proposer, { nullable: true })
+  dealsAsPropser: Deal[];
 
   @Field(() => [Like], { nullable: true })
   @OneToMany(() => Like, (like) => like.user, { nullable: true })

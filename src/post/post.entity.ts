@@ -4,16 +4,15 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   CreateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
 import { Like } from 'src/like/like.entity';
 import { Chat } from 'src/chat/chat.entity';
-import { Deal } from 'src/deal/deal.entity';
 import { PostStatus } from './dto/postStatusEnum';
 import { PostCategory, PostCategoryArray } from './dto/postCategoryEnum';
+import { Review } from 'src/review/review.entity';
 
 enum PostCategoryEnum {
   Digital,
@@ -49,6 +48,18 @@ export class Post {
   @Column()
   title: string;
 
+  @Field(() => PostCategoryEnum)
+  @Column({ type: 'enum', enum: [...PostCategoryArray] })
+  category: PostCategory;
+
+  @Field(() => [String])
+  @Column({ type: 'simple-array' })
+  pictures: string[];
+
+  @Field()
+  @Column()
+  descrioption: string;
+
   @Field(() => PostStatusEnum)
   @Column({
     type: 'enum',
@@ -57,25 +68,9 @@ export class Post {
   })
   status: PostStatus;
 
-  @Field(() => PostCategoryEnum)
-  @Column({ type: 'enum', enum: [...PostCategoryArray] })
-  category: PostCategory;
-
-  @Field()
-  @Column()
-  descrioption: string;
-
-  @Field(() => [String])
-  @Column({ type: 'simple-array' })
-  pictures: string[];
-
   @Field()
   @Column({ default: 0 })
   viewCount: number;
-
-  @Field(() => Date)
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
@@ -85,11 +80,15 @@ export class Post {
   @OneToMany(() => Chat, (chat) => chat.post, { nullable: true })
   chats: Chat[];
 
-  @Field(() => Deal, { nullable: true })
-  @OneToOne(() => Deal, (deal) => deal.post, { nullable: true })
-  deal: Deal;
-
   @Field(() => [Like], { nullable: true })
   @OneToMany(() => Like, (like) => like.post, { nullable: true })
   likes: Like[];
+
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.post, { nullable: true })
+  reviews: Review[];
+
+  @Field(() => Date)
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }
