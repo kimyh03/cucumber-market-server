@@ -11,8 +11,8 @@ type Chat {
 }
 
 input CreateUserInput {
-  phoneNumber: Float!
-  userName: String!
+  password: String!
+  username: String!
 }
 
 """
@@ -25,6 +25,10 @@ type Deal {
   dateTime: DateTime!
   id: ID!
   proposer: User!
+}
+
+input EditUserInput {
+  avatar: String!
 }
 
 type Like {
@@ -42,8 +46,9 @@ type Message {
 }
 
 type Mutation {
-  create(createUserData: CreateUserInput!): User!
-  remove(id: String!): Boolean!
+  createUser(args: CreateUserInput!): String!
+  editUserProfile(args: EditUserInput!, id: String!): User!
+  removeUser(id: String!): Boolean!
 }
 
 type Post {
@@ -79,7 +84,10 @@ enum PostStatusEnum {
 }
 
 type Query {
-  findOne(id: String!): User!
+  getUserProfile(id: String!): User!
+  logIn(password: String!, username: String!): String!
+  users: [User!]!
+  whoAmI: User!
 }
 
 type Review {
@@ -102,10 +110,11 @@ type User {
   likes: [Like!]
   Longitude: Float!
   messages: [Message!]
+  password: String!
   posts: [Post!]
   reviewsAsRecipient: [Review!]
   reviewsAsWriter: [Review!]
-  userName: String!
+  username: String!
 }
 
 enum WriterTypeEnum {

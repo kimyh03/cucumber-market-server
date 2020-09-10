@@ -22,7 +22,11 @@ export class User {
 
   @Field()
   @Column()
-  userName: string;
+  username: string;
+
+  @Field()
+  @Column()
+  password: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
