@@ -11,10 +11,15 @@ import { Deal } from './deal/deal.entity';
 import { Chat } from './chat/chat.entity';
 import { Message } from './message/message.entity';
 import { Like } from './like/like.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot({ autoSchemaFile: 'schema.gql', sortSchema: true }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: 'schema.gql',
+      sortSchema: true,
+      context: ({ req }) => ({ req }),
+    }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -28,6 +33,7 @@ import { Like } from './like/like.entity';
       logging: true,
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
 })
