@@ -27,10 +27,6 @@ type Deal {
   proposer: User!
 }
 
-input EditUserInput {
-  avatar: String!
-}
-
 type Like {
   id: ID!
   post: Post!
@@ -47,8 +43,9 @@ type Message {
 
 type Mutation {
   createUser(args: CreateUserInput!): String!
-  editUserProfile(args: EditUserInput!, id: String!): User!
-  removeUser(id: String!): Boolean!
+  removeUser(id: Float!): Boolean!
+  setLocation(latitude: Float!, longitude: Float!): User!
+  updateAvatar(avatar: String!): User!
 }
 
 type Post {
@@ -84,7 +81,7 @@ enum PostStatusEnum {
 }
 
 type Query {
-  getUserProfile(id: String!): User!
+  getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
   users: [User!]!
   whoAmI: User!
@@ -106,9 +103,9 @@ type User {
   chats: [Chat!]
   dealsAsPropser: [Deal!]
   id: ID!
-  Latitude: Float!
+  latitude: Float!
   likes: [Like!]
-  Longitude: Float!
+  longitude: Float!
   messages: [Message!]
   password: String!
   posts: [Post!]

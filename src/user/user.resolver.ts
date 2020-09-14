@@ -3,7 +3,6 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { Mutation, Query, Args, Resolver } from '@nestjs/graphql';
 import { NotFoundException, UseGuards } from '@nestjs/common';
-import { EditUserInput } from './dto/edit-user.dto';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { CurrentUser } from 'src/auth/auth.decorator';
@@ -15,29 +14,20 @@ export class UserResolver {
     private readonly authService: AuthService,
   ) {}
 
-  @Query(() => [User])
+  @Query(() => [User]) // for test
   async users() {
     return await this.userService.findAll();
   }
 
-  @Query(() => User)
+  @Query(() => User) // for test
   @UseGuards(GqlAuthGuard)
   whoAmI(@CurrentUser() user: User) {
     console.log(user);
     return user;
   }
 
-  @Query(() => String)
-  async logIn(
-    @Args('username') username: string,
-    @Args('password') password: string,
-  ) {
-    const authPayload = await this.authService.validateUser(username, password);
-    return await this.authService.login(authPayload);
-  }
-
-  @Mutation(() => Boolean)
-  async removeUser(@Args('id') id: string): Promise<boolean> {
+  @Mutation(() => Boolean) // for test
+  async removeUser(@Args('id') id: number): Promise<boolean> {
     try {
       await this.userService.remove(id);
       return true;
@@ -46,16 +36,30 @@ export class UserResolver {
     }
   }
 
+  @Query(() => String)
+  async logIn(
+    @Args('username') username: string,
+    @Args('password') password: string,
+  ) {
+    const authPayload = await this.authService.validateUser(username, password);
+    const token = await this.authService.login(authPayload);
+    return token;
+  }
+
   @Mutation(() => String)
   async createUser(@Args('args') args: CreateUserInput): Promise<string> {
     try {
       const existUser = await this.userService.findOneByUsername(args.username);
-      console.log(existUser);
       if (existUser) {
         throw new Error('Sorry, This user name is already taken.');
       } else {
         await this.userService.create(args);
-        return 'token comming soon';
+        const authPayload = await this.authService.validateUser(
+          args.username,
+          args.password,
+        );
+        const token = await this.authService.login(authPayload);
+        return token;
       }
     } catch (error) {
       throw new Error(error);
@@ -64,7 +68,7 @@ export class UserResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => User)
-  async getUserProfile(@Args('id') id: string): Promise<User> {
+  async getUserProfile(@Args('id') id: number): Promise<User> {
     try {
       const user = await this.userService.findOneById(id, [
         'reviewsAsRecipient',
@@ -80,19 +84,36 @@ export class UserResolver {
     }
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async editUserProfile(
-    @Args('id') id: string,
-    @Args('args') args: EditUserInput,
+  async updateAvatar(
+    @CurrentUser() currentUser: User,
+    @Args('avatar') avatar: string,
   ): Promise<User> {
     try {
-      const user = await this.userService.findOneById(id);
-      if (!user) {
-        throw new NotFoundException();
-      } else {
-        const updatedUser = this.userService.edit(user, args);
-        return updatedUser;
-      }
+      const user = await this.userService.findOneById(currentUser.id);
+      const updatedUser = this.userService.updateAvatar(user, avatar);
+      return updatedUser;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async setLocation(
+    @CurrentUser() currentUser: User,
+    @Args('latitude') latitude: number,
+    @Args('longitude') longitude: number,
+  ): Promise<User> {
+    try {
+      const user = await this.userService.findOneById(currentUser.id);
+      const updatedUser = this.userService.setLocation(
+        user,
+        latitude,
+        longitude,
+      );
+      return updatedUser;
     } catch (error) {
       throw new Error(error);
     }

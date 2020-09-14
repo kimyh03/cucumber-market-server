@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.dto';
 import { User } from './user.entity';
-import { EditUserInput } from './dto/edit-user.dto';
 
 @Injectable()
 export class UserService {
@@ -16,12 +15,12 @@ export class UserService {
     return await this.userRepository.save({ ...args });
   }
 
-  async findOneById(id: string, relations?: string[]): Promise<User> {
+  async findOneById(id: number, relations?: string[]): Promise<User> {
     if (relations === undefined) {
       return await this.userRepository.findOne(id);
     } else {
       return await this.userRepository.findOne({
-        where: id,
+        where: { id },
         relations: [...relations],
       });
     }
@@ -43,8 +42,19 @@ export class UserService {
     }
   }
 
-  async edit(user: User, args: EditUserInput): Promise<User> {
-    user.avatar = args.avatar;
+  async updateAvatar(user: User, avatar: string): Promise<User> {
+    user.avatar = avatar;
+    await this.userRepository.save(user);
+    return user;
+  }
+
+  async setLocation(
+    user: User,
+    latitude: number,
+    longitude: number,
+  ): Promise<User> {
+    user.latitude = latitude;
+    user.longitude = longitude;
     await this.userRepository.save(user);
     return user;
   }
@@ -57,7 +67,7 @@ export class UserService {
     }
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: number): Promise<boolean> {
     await this.userRepository.delete(id);
     return true;
   }

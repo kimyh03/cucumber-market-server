@@ -34,11 +34,11 @@ export class User {
 
   @Field(() => Float)
   @Column({ type: 'float', default: 0 })
-  Latitude: number;
+  latitude: number;
 
   @Field(() => Float)
   @Column({ type: 'float', default: 0 })
-  Longitude: number;
+  longitude: number;
 
   @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.user, { nullable: true })
