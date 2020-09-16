@@ -91,4 +91,7 @@ export class Post {
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @Field()
+  isLiked: boolean;
 }

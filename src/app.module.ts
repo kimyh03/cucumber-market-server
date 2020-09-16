@@ -12,13 +12,18 @@ import { Chat } from './chat/chat.entity';
 import { Message } from './message/message.entity';
 import { Like } from './like/like.entity';
 import { AuthModule } from './auth/auth.module';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       sortSchema: true,
-      context: ({ req }) => ({ req }),
+      context: async ({ req }) => {
+        const token = req.headers.authorization.split(' ')[1];
+        console.log(token);
+        return null;
+      },
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -34,6 +39,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    PostModule,
   ],
   controllers: [AppController],
 })

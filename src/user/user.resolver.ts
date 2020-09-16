@@ -2,10 +2,9 @@ import { CreateUserInput } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { Mutation, Query, Args, Resolver } from '@nestjs/graphql';
-import { NotFoundException, UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
+import { NotFoundException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
-import { CurrentUser } from 'src/auth/auth.decorator';
+import { currentUser } from '../auth/currentUser.decorator';
 
 @Resolver('user')
 export class UserResolver {
@@ -19,17 +18,10 @@ export class UserResolver {
     return await this.userService.findAll();
   }
 
-  @Query(() => User) // for test
-  @UseGuards(GqlAuthGuard)
-  whoAmI(@CurrentUser() user: User) {
-    console.log(user);
-    return user;
-  }
-
   @Mutation(() => Boolean) // for test
   async removeUser(@Args('id') id: number): Promise<boolean> {
     try {
-      await this.userService.remove(id);
+      await this.userService.delete(id);
       return true;
     } catch (error) {
       throw new Error(error);
@@ -38,12 +30,16 @@ export class UserResolver {
 
   @Query(() => String)
   async logIn(
+    @currentUser('user') user: User,
     @Args('username') username: string,
     @Args('password') password: string,
   ) {
-    const authPayload = await this.authService.validateUser(username, password);
-    const token = await this.authService.login(authPayload);
-    return token;
+    const userId = await this.authService.validateUser(username, password);
+    if (userId) {
+      return await this.authService.createJWT(userId);
+    } else {
+      return 'Wrong ID or Password';
+    }
   }
 
   @Mutation(() => String)
@@ -54,11 +50,11 @@ export class UserResolver {
         throw new Error('Sorry, This user name is already taken.');
       } else {
         await this.userService.create(args);
-        const authPayload = await this.authService.validateUser(
+        const userId = await this.authService.validateUser(
           args.username,
           args.password,
         );
-        const token = await this.authService.login(authPayload);
+        const token = await this.authService.createJWT(userId);
         return token;
       }
     } catch (error) {
@@ -66,7 +62,6 @@ export class UserResolver {
     }
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => User)
   async getUserProfile(@Args('id') id: number): Promise<User> {
     try {
@@ -84,14 +79,10 @@ export class UserResolver {
     }
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async updateAvatar(
-    @CurrentUser() currentUser: User,
-    @Args('avatar') avatar: string,
-  ): Promise<User> {
+  async updateAvatar(@Args('avatar') avatar: string): Promise<User> {
     try {
-      const user = await this.userService.findOneById(currentUser.id);
+      const user = await this.userService.findOneById(1);
       const updatedUser = this.userService.updateAvatar(user, avatar);
       return updatedUser;
     } catch (error) {
@@ -99,15 +90,13 @@ export class UserResolver {
     }
   }
 
-  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   async setLocation(
-    @CurrentUser() currentUser: User,
     @Args('latitude') latitude: number,
     @Args('longitude') longitude: number,
   ): Promise<User> {
     try {
-      const user = await this.userService.findOneById(currentUser.id);
+      const user = await this.userService.findOneById(1);
       const updatedUser = this.userService.setLocation(
         user,
         latitude,
