@@ -2,9 +2,10 @@ import { CreateUserInput } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { Mutation, Query, Args, Resolver } from '@nestjs/graphql';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { currentUser } from '../auth/currentUser.decorator';
+import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Resolver('user')
 export class UserResolver {
@@ -16,6 +17,12 @@ export class UserResolver {
   @Query(() => [User]) // for test
   async users() {
     return await this.userService.findAll();
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => User)
+  async whoAmI(@currentUser('user') user: User) {
+    return user;
   }
 
   @Mutation(() => Boolean) // for test
@@ -30,13 +37,12 @@ export class UserResolver {
 
   @Query(() => String)
   async logIn(
-    @currentUser('user') user: User,
     @Args('username') username: string,
     @Args('password') password: string,
   ) {
-    const userId = await this.authService.validateUser(username, password);
-    if (userId) {
-      return await this.authService.createJWT(userId);
+    const payload = await this.authService.validateUser(username, password);
+    if (payload) {
+      return await this.authService.issueJWT(payload);
     } else {
       return 'Wrong ID or Password';
     }
@@ -50,11 +56,11 @@ export class UserResolver {
         throw new Error('Sorry, This user name is already taken.');
       } else {
         await this.userService.create(args);
-        const userId = await this.authService.validateUser(
+        const payload = await this.authService.validateUser(
           args.username,
           args.password,
         );
-        const token = await this.authService.createJWT(userId);
+        const token = await this.authService.issueJWT(payload);
         return token;
       }
     } catch (error) {

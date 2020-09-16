@@ -96,6 +96,7 @@ type Query {
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
   users: [User!]!
+  whoAmI: User!
 }
 
 type Review {

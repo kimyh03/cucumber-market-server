@@ -19,11 +19,7 @@ import { PostModule } from './post/post.module';
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       sortSchema: true,
-      context: async ({ req }) => {
-        const token = req.headers.authorization.split(' ')[1];
-        console.log(token);
-        return null;
-      },
+      context: async ({ req }) => req,
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({

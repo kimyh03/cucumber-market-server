@@ -2,6 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 export const currentUser = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) =>
-    GqlExecutionContext.create(ctx).getContext().user,
+  async (data: unknown, ctx: ExecutionContext) => {
+    return await GqlExecutionContext.create(ctx).getContext().user;
+  },
 );
