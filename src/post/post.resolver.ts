@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
-import { UseGuards, NotFoundException } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Post } from './post.entity';
 import { CreatePostInput } from './dto/create-post.dto';
 import { User } from 'src/user/user.entity';
@@ -17,11 +17,27 @@ export class PostResolver {
     private readonly userService: UserService,
   ) {}
 
+  @Query(() => [Post])
+  async findAllPosts() {
+    return await this.postService.findAll();
+  }
+
+  @Mutation(() => Boolean)
+  async deletePost(@Args('id') id: number) {
+    return await this.postService.delete(id);
+  }
+
   @Mutation(() => Post)
   @UseGuards(GqlAuthGuard)
-  async createPost(@Args('args') args: CreatePostInput): Promise<Post> {
-    const user = await this.userService.findOneById(1);
-    return await this.postService.create(user, args);
+  async createPost(
+    @currentUser() user: User,
+    @Args('args') args: CreatePostInput,
+  ): Promise<Post> {
+    try {
+      return await this.postService.create(user, args);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Query(() => Post)
@@ -31,18 +47,14 @@ export class PostResolver {
   ): Promise<Post> {
     try {
       const post = await this.postService.findOneById(postId);
-      if (!post) {
-        throw new NotFoundException();
+      let isLiked: boolean;
+      if (!user) {
+        isLiked = false;
       } else {
-        let isLiked;
-        if (true) {
-          isLiked = false;
-        } else {
-          isLiked = await this.likeService.isLiked(1, postId);
-        }
-        const newPost = { ...post, isLiked };
-        return newPost;
+        isLiked = await this.likeService.isLiked(user.id, postId);
       }
+      const newPost = { ...post, isLiked };
+      return newPost;
     } catch (error) {
       throw new Error(error);
     }
