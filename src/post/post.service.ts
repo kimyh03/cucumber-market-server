@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
 import { Repository } from 'typeorm';
@@ -18,10 +22,18 @@ export class PostService {
     return await this.postRepository.save({ user, ...args });
   }
 
-  async edit(postId: number, args: EditPostInput): Promise<Post> {
+  async edit(
+    userId: number,
+    postId: number,
+    args: EditPostInput,
+  ): Promise<Post> {
     const post = await this.findOneById(postId);
-    const editedPost = Object.assign(post, args);
-    return await this.postRepository.save(editedPost);
+    if (post.userId !== userId) {
+      throw new UnauthorizedException();
+    } else {
+      const editedPost = Object.assign(post, args);
+      return await this.postRepository.save(editedPost);
+    }
   }
 
   async findAll(): Promise<Post[]> {
@@ -47,7 +59,7 @@ export class PostService {
     if (!post) {
       throw new NotFoundException();
     } else {
-      await this.postRepository.delete(post);
+      await this.postRepository.delete(id);
       return true;
     }
   }

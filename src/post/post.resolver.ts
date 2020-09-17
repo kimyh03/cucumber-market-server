@@ -8,6 +8,7 @@ import { User } from 'src/user/user.entity';
 import { LikeService } from 'src/like/like.service';
 import { UserService } from 'src/user/user.service';
 import { currentUser } from '../auth/currentUser.decorator';
+import { EditPostInput } from './dto/edit-post.dto';
 
 @Resolver('post')
 export class PostResolver {
@@ -34,7 +35,8 @@ export class PostResolver {
     @Args('args') args: CreatePostInput,
   ): Promise<Post> {
     try {
-      return await this.postService.create(user, args);
+      const userInstance = await this.userService.findOneById(user.id);
+      return await this.postService.create(userInstance, args);
     } catch (error) {
       throw new Error(error);
     }
@@ -55,6 +57,21 @@ export class PostResolver {
       }
       const newPost = { ...post, isLiked };
       return newPost;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @Mutation(() => Post)
+  @UseGuards(GqlAuthGuard)
+  async editPost(
+    @currentUser('user') user: User,
+    @Args('postId') postId: number,
+    @Args('args') args: EditPostInput,
+  ): Promise<Post> {
+    try {
+      const post = await this.postService.edit(user.id, postId, args);
+      return post;
     } catch (error) {
       throw new Error(error);
     }

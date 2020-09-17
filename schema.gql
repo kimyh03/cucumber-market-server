@@ -34,6 +34,13 @@ type Deal {
   proposer: User!
 }
 
+input EditPostInput {
+  category: PostCategoryEnum
+  descrioption: String
+  pictures: [String!]
+  title: String
+}
+
 type Like {
   id: ID!
   post: Post!
@@ -54,6 +61,7 @@ type Mutation {
   createPost(args: CreatePostInput!): Post!
   createUser(args: CreateUserInput!): String!
   deletePost(id: Float!): Boolean!
+  editPost(args: EditPostInput!, postId: Float!): Post!
   removeUser(id: Float!): Boolean!
   setLocation(latitude: Float!, longitude: Float!): User!
   updateAvatar(avatar: String!): User!
@@ -72,6 +80,7 @@ type Post {
   status: PostStatusEnum!
   title: String!
   user: User!
+  userId: Float!
   viewCount: Float!
 }
 
