@@ -11,7 +11,7 @@ type Chat {
 }
 
 input CreatePostInput {
-  category: String!
+  category: PostCategoryEnum!
   descrioption: String!
   pictures: [String!]!
   title: String!
@@ -53,6 +53,7 @@ type Message {
 type Mutation {
   createPost(args: CreatePostInput!): Post!
   createUser(args: CreateUserInput!): String!
+  deletePost(id: Float!): Boolean!
   removeUser(id: Float!): Boolean!
   setLocation(latitude: Float!, longitude: Float!): User!
   updateAvatar(avatar: String!): User!
@@ -64,7 +65,7 @@ type Post {
   createdAt: DateTime!
   descrioption: String!
   id: ID!
-  isLiked: Boolean!
+  isLiked: Boolean
   likes: [Like!]
   pictures: [String!]!
   reviews: [Review!]
@@ -92,6 +93,7 @@ enum PostStatusEnum {
 }
 
 type Query {
+  findAllPosts: [Post!]!
   getPostDetail(postId: Float!): Post!
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!

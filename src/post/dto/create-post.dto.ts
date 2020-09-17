@@ -1,13 +1,17 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { PostCategory } from './postCategoryEnum';
+import { InputType, Field, registerEnumType } from '@nestjs/graphql';
+import { PostCategoryEnum } from './postCategoryEnum';
+
+registerEnumType(PostCategoryEnum, {
+  name: 'PostCategoryEnum',
+});
 
 @InputType()
 export class CreatePostInput {
   @Field()
   title: string;
 
-  @Field()
-  category: PostCategory;
+  @Field(() => PostCategoryEnum)
+  category: PostCategoryEnum;
 
   @Field(() => [String])
   pictures: string[];

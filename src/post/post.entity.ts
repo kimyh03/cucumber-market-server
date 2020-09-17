@@ -10,29 +10,14 @@ import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
 import { Like } from 'src/like/like.entity';
 import { Chat } from 'src/chat/chat.entity';
-import { PostStatus } from './dto/postStatusEnum';
-import { PostCategory, PostCategoryArray } from './dto/postCategoryEnum';
 import { Review } from 'src/review/review.entity';
+import { PostCategoryEnum } from './dto/postCategoryEnum';
+import { PostStatusEnum } from './dto/PostStatusEnum';
 
-enum PostCategoryEnum {
-  Digital,
-  Funiture,
-  Living,
-  Sports,
-  Beauty,
-  Fashion,
-  Pet,
-  Others,
-}
 registerEnumType(PostCategoryEnum, {
   name: 'PostCategoryEnum',
 });
 
-enum PostStatusEnum {
-  OnSale,
-  SoldOut,
-  Hidden,
-}
 registerEnumType(PostStatusEnum, {
   name: 'PostStatusEnum',
 });
@@ -49,8 +34,11 @@ export class Post {
   title: string;
 
   @Field(() => PostCategoryEnum)
-  @Column({ type: 'enum', enum: [...PostCategoryArray] })
-  category: PostCategory;
+  @Column({
+    type: 'enum',
+    enum: PostCategoryEnum,
+  })
+  category: PostCategoryEnum;
 
   @Field(() => [String])
   @Column({ type: 'simple-array' })
@@ -63,10 +51,10 @@ export class Post {
   @Field(() => PostStatusEnum)
   @Column({
     type: 'enum',
-    enum: ['OnSale', 'SoldOut', 'Hidden'],
+    enum: PostStatusEnum,
     default: 'OnSale',
   })
-  status: PostStatus;
+  status: PostStatusEnum;
 
   @Field()
   @Column({ default: 0 })
@@ -92,6 +80,6 @@ export class Post {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   isLiked: boolean;
 }

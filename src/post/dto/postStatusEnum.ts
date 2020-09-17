@@ -1,1 +1,5 @@
-export type PostStatus = 'Booked' | 'SoldOut' | 'Hidden';
+export enum PostStatusEnum {
+  OnSale = 'OnSale',
+  SoldOut = 'SoldOut',
+  Hidden = 'Hidden',
+}
