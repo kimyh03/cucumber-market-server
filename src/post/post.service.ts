@@ -64,9 +64,17 @@ export class PostService {
     }
   }
 
-  async setStatus(postId: number, status: PostStatusEnum): Promise<Post> {
+  async setStatus(
+    userId: number,
+    postId: number,
+    status: PostStatusEnum,
+  ): Promise<Post> {
     const post = await this.findOneById(postId);
-    post.status = status;
-    return await this.postRepository.save(post);
+    if (post.userId !== userId) {
+      throw new UnauthorizedException();
+    } else {
+      post.status = status;
+      return await this.postRepository.save(post);
+    }
   }
 }

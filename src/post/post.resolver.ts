@@ -1,4 +1,10 @@
-import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Query,
+  Args,
+  registerEnumType,
+} from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -9,6 +15,11 @@ import { LikeService } from 'src/like/like.service';
 import { UserService } from 'src/user/user.service';
 import { currentUser } from '../auth/currentUser.decorator';
 import { EditPostInput } from './dto/edit-post.dto';
+import { PostStatusEnum } from './dto/PostStatusEnum';
+
+registerEnumType(PostStatusEnum, {
+  name: 'PostStatusEnum',
+});
 
 @Resolver('post')
 export class PostResolver {
@@ -71,6 +82,21 @@ export class PostResolver {
   ): Promise<Post> {
     try {
       const post = await this.postService.edit(user.id, postId, args);
+      return post;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @Mutation(() => Post)
+  @UseGuards(GqlAuthGuard)
+  async setPostStatus(
+    @currentUser('user') user: User,
+    @Args('postId') postId: number,
+    @Args('status') status: PostStatusEnum,
+  ): Promise<Post> {
+    try {
+      const post = await this.postService.setStatus(user.id, postId, status);
       return post;
     } catch (error) {
       throw new Error(error);

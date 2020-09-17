@@ -97,7 +97,7 @@ export class UserResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async setLocation(
+  async setUserLocation(
     @currentUser('user') user: User,
     @Args('latitude') latitude: number,
     @Args('longitude') longitude: number,

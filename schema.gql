@@ -63,7 +63,8 @@ type Mutation {
   deletePost(id: Float!): Boolean!
   editPost(args: EditPostInput!, postId: Float!): Post!
   removeUser(id: Float!): Boolean!
-  setLocation(latitude: Float!, longitude: Float!): User!
+  setPostStatus(postId: Float!, status: String!): Post!
+  setUserLocation(latitude: Float!, longitude: Float!): User!
   updateAvatar(avatar: String!): User!
 }
 
