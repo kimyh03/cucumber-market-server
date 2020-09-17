@@ -13,6 +13,7 @@ import { Message } from './message/message.entity';
 import { Like } from './like/like.entity';
 import { AuthModule } from './auth/auth.module';
 import { PostModule } from './post/post.module';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PostModule } from './post/post.module';
     UserModule,
     AuthModule,
     PostModule,
+    LikeModule,
   ],
   controllers: [AppController],
 })
