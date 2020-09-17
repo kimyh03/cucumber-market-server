@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.dto';
@@ -17,12 +17,22 @@ export class UserService {
 
   async findOneById(id: number, relations?: string[]): Promise<User> {
     if (relations === undefined) {
-      return await this.userRepository.findOne(id);
+      const user = await this.userRepository.findOne(id);
+      if (!user) {
+        throw new NotFoundException();
+      } else {
+        return user;
+      }
     } else {
-      return await this.userRepository.findOne({
+      const user = await this.userRepository.findOne({
         where: { id },
         relations: [...relations],
       });
+      if (!user) {
+        throw new NotFoundException();
+      } else {
+        return user;
+      }
     }
   }
 
@@ -42,19 +52,21 @@ export class UserService {
     }
   }
 
-  async updateAvatar(user: User, avatar: string): Promise<User> {
-    user.avatar = avatar;
+  async updateAvatar(id: number, newAvatar: string): Promise<User> {
+    const user = await this.findOneById(id);
+    user.avatar = newAvatar;
     await this.userRepository.save(user);
     return user;
   }
 
   async setLocation(
-    user: User,
-    latitude: number,
-    longitude: number,
+    id: number,
+    newlatitude: number,
+    newlongitude: number,
   ): Promise<User> {
-    user.latitude = latitude;
-    user.longitude = longitude;
+    const user = await this.findOneById(id);
+    user.latitude = newlatitude;
+    user.longitude = newlongitude;
     await this.userRepository.save(user);
     return user;
   }

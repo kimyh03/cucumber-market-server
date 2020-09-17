@@ -29,7 +29,6 @@ export class PostResolver {
     @currentUser() user: User,
     @Args('postId') postId: number,
   ): Promise<Post> {
-    console.log(user);
     try {
       const post = await this.postService.findOneById(postId);
       if (!post) {

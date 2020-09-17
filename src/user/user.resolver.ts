@@ -2,7 +2,7 @@ import { CreateUserInput } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { Mutation, Query, Args, Resolver } from '@nestjs/graphql';
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { currentUser } from '../auth/currentUser.decorator';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -20,7 +20,7 @@ export class UserResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => User)
+  @Query(() => User) // for test
   async whoAmI(@currentUser('user') user: User) {
     return user;
   }
@@ -75,36 +75,36 @@ export class UserResolver {
         'reviewsAsRecipient',
         'posts',
       ]);
-      if (!user) {
-        throw new NotFoundException();
-      } else {
-        return user;
-      }
+      return user;
     } catch (error) {
       throw new Error(error);
     }
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async updateAvatar(@Args('avatar') avatar: string): Promise<User> {
+  async updateAvatar(
+    @currentUser('user') user: User,
+    @Args('avatar') avatar: string,
+  ): Promise<User> {
     try {
-      const user = await this.userService.findOneById(1);
-      const updatedUser = this.userService.updateAvatar(user, avatar);
+      const updatedUser = this.userService.updateAvatar(user.id, avatar);
       return updatedUser;
     } catch (error) {
       throw new Error(error);
     }
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   async setLocation(
+    @currentUser('user') user: User,
     @Args('latitude') latitude: number,
     @Args('longitude') longitude: number,
   ): Promise<User> {
     try {
-      const user = await this.userService.findOneById(1);
       const updatedUser = this.userService.setLocation(
-        user,
+        user.id,
         latitude,
         longitude,
       );
