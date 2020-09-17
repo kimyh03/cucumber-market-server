@@ -30,9 +30,14 @@ export class LikeResolver {
     try {
       const userInstance = await this.userService.findOneById(user.id);
       const postInstance = await this.postService.findOneById(postId);
-      return await this.likeService.toggleLike(userInstance, postInstance);
+      return await this.likeService.toggle(userInstance, postInstance);
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  @Query(() => [Like])
+  async getLikedPosts(@currentUser('user') user: User) {
+    return await this.likeService.findWithPost(user.id);
   }
 }

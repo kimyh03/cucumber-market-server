@@ -27,7 +27,7 @@ export class LikeService {
     }
   }
 
-  async toggleLike(user: User, post: Post): Promise<string> {
+  async toggle(user: User, post: Post): Promise<string> {
     const existLike = await this.likeRepository.findOne({
       where: { userId: user.id, postId: post.id },
     });
@@ -38,5 +38,12 @@ export class LikeService {
       this.likeRepository.save({ user, post });
       return 'You have a new like now!';
     }
+  }
+
+  async findWithPost(userId: number): Promise<Like[]> {
+    return await this.likeRepository.find({
+      where: { userId },
+      relations: ['post'],
+    });
   }
 }

@@ -106,6 +106,7 @@ enum PostStatusEnum {
 type Query {
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
+  getLikedPosts: [Like!]!
   getPostDetail(postId: Float!): Post!
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
