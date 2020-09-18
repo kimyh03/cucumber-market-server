@@ -67,6 +67,7 @@ type Mutation {
   createUser(args: CreateUserInput!): String!
   deletePost(id: Float!): Boolean!
   editPost(args: EditPostInput!, postId: Float!): Post!
+  getChatRoomInPost(postId: Float!): Chat!
   removeUser(id: Float!): Boolean!
   setPostStatus(postId: Float!, status: String!): Post!
   setUserLocation(latitude: Float!, longitude: Float!): User!
@@ -115,7 +116,7 @@ type Query {
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
   getChatRoomInList(chatId: Float!): Chat!
-  getChatRoomInPost(postId: Float!): Chat!
+  getChatsList: [Chat!]!
   getLikedPosts: [Like!]!
   getMyPurchasesList: [Post!]!
   getMySalesList(status: String!): [Post!]!

@@ -44,19 +44,19 @@ export class ChatService {
     });
   }
 
-  async create(userId: number, postId: number): Promise<Chat> {
+  async create(userId: number, postId: number): Promise<boolean> {
     const post = await this.postService.findOneById(postId);
     const requestUser = await this.userService.findOneById(userId);
     const seller = await this.userService.findOneById(post.sellerId);
     if (requestUser.id === seller.id) {
       throw new Error("You can't make a chat on your post");
     } else {
-      const newChat = await this.chatRepository.save({
+      await this.chatRepository.save({
         post,
         seller,
         buyer: requestUser,
       });
-      return await this.findOneById(newChat.id);
+      return true;
     }
   }
 
@@ -79,7 +79,15 @@ export class ChatService {
     if (existChat) {
       return await this.findOneByUserIdAndPostId(userId, postId);
     } else {
-      return await this.create(userId, postId);
+      await this.create(userId, postId);
+      return await this.findOneByUserIdAndPostId(userId, postId);
     }
+  }
+
+  async findAllByUserId(userId: number): Promise<Chat[]> {
+    return await this.chatRepository.find({
+      where: [{ sellerId: userId }, { buyerId: userId }],
+      relations: ['post', 'messages', 'deals'],
+    });
   }
 }

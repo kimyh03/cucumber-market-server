@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { currentUser } from 'src/auth/currentUser.decorator';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
 import { User } from 'src/user/user.entity';
@@ -25,13 +25,23 @@ export class ChatResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => Chat)
+  @Mutation(() => Chat)
   async getChatRoomInPost(
     @currentUser('user') user: User,
     @Args('postId') postId: number,
   ): Promise<Chat> {
     try {
       return await this.chatService.getRoom(user.id, postId);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Chat])
+  async getChatsList(@currentUser('user') user: User) {
+    try {
+      return await this.chatService.findAllByUserId(user.id);
     } catch (error) {
       throw new Error(error);
     }
