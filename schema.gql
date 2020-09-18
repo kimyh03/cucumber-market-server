@@ -3,11 +3,16 @@
 # ------------------------------------------------------
 
 type Chat {
+  buyer: User!
+  buyerId: Float!
+  createdAt: DateTime!
   deal: Deal
   id: ID!
   messages: [Message!]
-  paticipants: [User!]!
   post: Post
+  postId: Float
+  seller: User!
+  sellerId: Float!
 }
 
 input CreatePostInput {
@@ -106,6 +111,7 @@ enum PostStatusEnum {
 }
 
 type Query {
+  chats: [Chat!]!
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
   getLikedPosts: [Like!]!
@@ -131,7 +137,8 @@ type Review {
 
 type User {
   avatar: String
-  chats: [Chat!]
+  chatsAsBuyer: [Chat!]
+  chatsAsSeller: [Chat!]
   dealsAsPropser: [Deal!]
   id: ID!
   latitude: Float!

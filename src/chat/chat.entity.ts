@@ -21,7 +21,7 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.chatsAsSeller)
   seller: User;
 
@@ -30,7 +30,7 @@ export class Chat {
   @Column()
   sellerId: number;
 
-  @Field()
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.chatsAsBuyer)
   buyer: User;
 
