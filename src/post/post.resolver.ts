@@ -102,4 +102,17 @@ export class PostResolver {
       throw new Error(error);
     }
   }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Post])
+  async getMySalesList(
+    @currentUser('user') user: User,
+    @Args('status') status: PostStatusEnum,
+  ): Promise<Post[]> {
+    try {
+      return await this.postService.findByStatus(user.id, status);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

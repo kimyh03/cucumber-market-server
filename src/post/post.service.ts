@@ -77,4 +77,13 @@ export class PostService {
       return await this.postRepository.save(post);
     }
   }
+
+  async findByStatus(
+    sellerId: number,
+    status: PostStatusEnum,
+  ): Promise<Post[]> {
+    return await this.postRepository.find({
+      where: { sellerId, status },
+    });
+  }
 }

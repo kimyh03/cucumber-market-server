@@ -108,6 +108,7 @@ type Query {
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
   getLikedPosts: [Like!]!
+  getMySalesList(status: String!): [Post!]!
   getPostDetail(postId: Float!): Post!
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
