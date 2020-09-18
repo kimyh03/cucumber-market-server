@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostService } from 'src/post/post.service';
 import { UserService } from 'src/user/user.service';
@@ -17,5 +17,17 @@ export class ChatService {
   async findAll(): Promise<Chat[]> {
     // for test
     return await this.chatRepository.find();
+  }
+
+  async findOneById(chatId: number): Promise<Chat> {
+    const chat = await this.chatRepository.findOne({
+      where: { id: chatId },
+      relations: ['post', 'messages', 'deals'],
+    });
+    if (!chat) {
+      throw new NotFoundException();
+    } else {
+      return chat;
+    }
   }
 }

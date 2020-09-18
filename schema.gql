@@ -6,11 +6,11 @@ type Chat {
   buyer: User!
   buyerId: Float!
   createdAt: DateTime!
-  deal: Deal
+  deals: Deal
   id: ID!
   messages: [Message!]
-  post: Post
-  postId: Float
+  post: Post!
+  postId: Float!
   seller: User!
   sellerId: Float!
 }
@@ -76,7 +76,7 @@ type Mutation {
 
 type Post {
   buyers: User
-  buyersId: [Float!]!
+  buyersId: [Float!]
   category: PostCategoryEnum!
   chats: [Chat!]
   createdAt: DateTime!
@@ -114,6 +114,7 @@ type Query {
   chats: [Chat!]!
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
+  getChatRoomInList(chatId: Float!): Chat!
   getLikedPosts: [Like!]!
   getMyPurchasesList: [Post!]!
   getMySalesList(status: String!): [Post!]!

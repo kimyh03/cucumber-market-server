@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   RelationId,
   Column,
   CreateDateColumn,
@@ -43,18 +42,18 @@ export class Chat {
   @OneToMany(() => Message, (message) => message.chat, { nullable: true })
   messages: Message[];
 
-  @Field(() => Post, { nullable: true })
-  @ManyToOne(() => Post, (post) => post.chats, { nullable: true })
+  @Field(() => Post)
+  @ManyToOne(() => Post, (post) => post.chats)
   post: Post;
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Number)
   @RelationId((chat: Chat) => chat.post)
   @Column()
   postId: number;
 
   @Field(() => Deal, { nullable: true })
-  @OneToOne(() => Deal, (deal) => deal.chat, { nullable: true })
-  deal: Deal;
+  @OneToMany(() => Deal, (deal) => deal.chat, { nullable: true })
+  deals: Deal;
 
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })

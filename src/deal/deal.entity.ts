@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  OneToOne,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { Chat } from 'src/chat/chat.entity';
 import { User } from 'src/user/user.entity';
@@ -25,6 +19,6 @@ export class Deal {
   dateTime: Date;
 
   @Field(() => Chat)
-  @OneToOne(() => Chat, (chat) => chat.deal, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Chat, (chat) => chat.deals, { onDelete: 'CASCADE' })
   chat: Chat;
 }
