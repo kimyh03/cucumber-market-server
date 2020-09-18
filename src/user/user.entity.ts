@@ -57,8 +57,12 @@ export class User {
   reviewsAsWriter: Review[];
 
   @Field(() => [Chat], { nullable: true })
-  @ManyToMany(() => Chat, (chat) => chat.paticipants, { nullable: true })
-  chats: Chat[];
+  @ManyToMany(() => Chat, (chat) => chat.seller, { nullable: true })
+  chatsAsSeller: Chat[];
+
+  @Field(() => [Chat], { nullable: true })
+  @ManyToMany(() => Chat, (chat) => chat.buyer, { nullable: true })
+  chatsAsBuyer: Chat[];
 
   @Field(() => [Message], { nullable: true })
   @OneToMany(() => Message, (message) => message.user, { nullable: true })

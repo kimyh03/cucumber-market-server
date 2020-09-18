@@ -14,6 +14,7 @@ import { Like } from './like/like.entity';
 import { AuthModule } from './auth/auth.module';
 import { PostModule } from './post/post.module';
 import { LikeModule } from './like/like.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { LikeModule } from './like/like.module';
     AuthModule,
     PostModule,
     LikeModule,
+    ChatModule,
   ],
   controllers: [AppController],
 })

@@ -4,8 +4,9 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  ManyToMany,
-  JoinTable,
+  RelationId,
+  Column,
+  CreateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
@@ -20,10 +21,23 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.chats)
-  @JoinTable()
-  paticipants: User[];
+  @Field()
+  @ManyToOne(() => User, (user) => user.chatsAsSeller)
+  seller: User;
+
+  @Field(() => Number)
+  @RelationId((chat: Chat) => chat.seller)
+  @Column()
+  sellerId: number;
+
+  @Field()
+  @ManyToOne(() => User, (user) => user.chatsAsBuyer)
+  buyer: User;
+
+  @Field(() => Number)
+  @RelationId((chat: Chat) => chat.buyer)
+  @Column()
+  buyerId: number;
 
   @Field(() => [Message], { nullable: true })
   @OneToMany(() => Message, (message) => message.chat, { nullable: true })
@@ -33,7 +47,16 @@ export class Chat {
   @ManyToOne(() => Post, (post) => post.chats, { nullable: true })
   post: Post;
 
+  @Field(() => Number, { nullable: true })
+  @RelationId((chat: Chat) => chat.post)
+  @Column()
+  postId: number;
+
   @Field(() => Deal, { nullable: true })
   @OneToOne(() => Deal, (deal) => deal.chat, { nullable: true })
   deal: Deal;
+
+  @Field(() => Date)
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }
