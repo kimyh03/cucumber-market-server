@@ -12,7 +12,6 @@ import { Post } from './post.entity';
 import { CreatePostInput } from './dto/create-post.dto';
 import { User } from 'src/user/user.entity';
 import { LikeService } from 'src/like/like.service';
-import { UserService } from 'src/user/user.service';
 import { currentUser } from '../auth/currentUser.decorator';
 import { EditPostInput } from './dto/edit-post.dto';
 import { PostStatusEnum } from './dto/PostStatusEnum';
@@ -26,7 +25,6 @@ export class PostResolver {
   constructor(
     private readonly postService: PostService,
     private readonly likeService: LikeService,
-    private readonly userService: UserService,
   ) {}
 
   @Query(() => [Post])
@@ -46,8 +44,7 @@ export class PostResolver {
     @Args('args') args: CreatePostInput,
   ): Promise<Post> {
     try {
-      const userInstance = await this.userService.findOneById(user.id);
-      return await this.postService.create(userInstance, args);
+      return await this.postService.create(user.id, args);
     } catch (error) {
       throw new Error(error);
     }

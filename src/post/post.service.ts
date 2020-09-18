@@ -5,20 +5,22 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreatePostInput } from './dto/create-post.dto';
 import { EditPostInput } from './dto/edit-post.dto';
 import { PostStatusEnum } from './dto/postStatusEnum';
-import { User } from 'src/user/user.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PostService {
   constructor(
+    private readonly userService: UserService,
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
   ) {}
 
-  async create(user: User, args: CreatePostInput): Promise<Post> {
+  async create(userId: number, args: CreatePostInput): Promise<Post> {
+    const user = await this.userService.findOneById(userId);
     return await this.postRepository.save({ user, ...args });
   }
 
@@ -88,8 +90,7 @@ export class PostService {
   }
 
   async findPurchases(buyerId: number): Promise<Post[]> {
-    return await this.postRepository.find({
-      buyersId: In([buyerId]),
-    });
+    const user = await this.userService.findOneById(buyerId, ['postsAsBuyer']);
+    return user.postsAsBuyer;
   }
 }
