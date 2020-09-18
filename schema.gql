@@ -70,6 +70,7 @@ type Mutation {
 }
 
 type Post {
+  buyers: User
   category: PostCategoryEnum!
   chats: [Chat!]
   createdAt: DateTime!
@@ -79,10 +80,10 @@ type Post {
   likes: [Like!]
   pictures: [String!]!
   reviews: [Review!]
+  seller: User!
+  sellerId: Float!
   status: PostStatusEnum!
   title: String!
-  user: User!
-  userId: Float!
   viewCount: Float!
 }
 
@@ -135,7 +136,8 @@ type User {
   longitude: Float!
   messages: [Message!]
   password: String!
-  posts: [Post!]
+  postsAsBuyer: [Post!]
+  postsAsSeller: [Post!]
   reviewsAsRecipient: [Review!]
   reviewsAsWriter: [Review!]
   username: String!

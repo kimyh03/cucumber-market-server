@@ -28,7 +28,7 @@ export class PostService {
     args: EditPostInput,
   ): Promise<Post> {
     const post = await this.findOneById(postId);
-    if (post.userId !== userId) {
+    if (post.sellerId !== userId) {
       throw new UnauthorizedException();
     } else {
       const editedPost = Object.assign(post, args);
@@ -70,7 +70,7 @@ export class PostService {
     status: PostStatusEnum,
   ): Promise<Post> {
     const post = await this.findOneById(postId);
-    if (post.userId !== userId) {
+    if (post.sellerId !== userId) {
       throw new UnauthorizedException();
     } else {
       post.status = status;

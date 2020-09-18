@@ -1,1 +1,4 @@
-export type WriterType = 'Seller' | 'Buyer';
+export enum WriterTypeEnum {
+  Seller,
+  Buyer,
+}

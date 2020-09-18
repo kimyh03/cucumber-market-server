@@ -6,6 +6,8 @@ import {
   OneToMany,
   CreateDateColumn,
   RelationId,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
@@ -62,13 +64,18 @@ export class Post {
   viewCount: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
-  user: User;
+  @ManyToOne(() => User, (user) => user.postsAsSeller, { onDelete: 'CASCADE' })
+  seller: User;
 
   @Field(() => Number)
-  @RelationId((post: Post) => post.user)
+  @RelationId((post: Post) => post.seller)
   @Column()
-  userId: number;
+  sellerId: number;
+
+  @Field(() => User, { nullable: true })
+  @ManyToMany(() => User, (user) => user.postsAsBuyer, { nullable: true })
+  @JoinTable()
+  buyers: User[];
 
   @Field(() => [Chat], { nullable: true })
   @OneToMany(() => Chat, (chat) => chat.post, { nullable: true })

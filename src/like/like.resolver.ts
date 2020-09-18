@@ -36,8 +36,13 @@ export class LikeResolver {
     }
   }
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => [Like])
   async getLikedPosts(@currentUser('user') user: User) {
-    return await this.likeService.findWithPost(user.id);
+    try {
+      return await this.likeService.findWithPost(user.id);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

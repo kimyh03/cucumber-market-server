@@ -41,8 +41,12 @@ export class User {
   longitude: number;
 
   @Field(() => [Post], { nullable: true })
-  @OneToMany(() => Post, (post) => post.user, { nullable: true })
-  posts: Post[];
+  @OneToMany(() => Post, (post) => post.seller, { nullable: true })
+  postsAsSeller: Post[];
+
+  @Field(() => [Post], { nullable: true })
+  @ManyToMany(() => Post, (post) => post.buyers, { nullable: true })
+  postsAsBuyer: Post[];
 
   @Field(() => [Review], { nullable: true })
   @OneToMany(() => Review, (review) => review.recipient, { nullable: true })

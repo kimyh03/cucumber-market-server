@@ -9,11 +9,8 @@ import {
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
 import { Post } from 'src/post/post.entity';
+import { WriterTypeEnum } from './dto/writerTypeEnum';
 
-enum WriterTypeEnum {
-  Seller,
-  Buyer,
-}
 registerEnumType(WriterTypeEnum, {
   name: 'WriterTypeEnum',
 });
@@ -38,7 +35,7 @@ export class Review extends BaseEntity {
   writer: User;
 
   @Field(() => WriterTypeEnum)
-  @Column({ type: 'enum', enum: ['Seller', 'Buyer'] })
+  @Column({ type: 'enum', enum: WriterTypeEnum })
   writerType: WriterTypeEnum;
 
   @Field(() => User)
