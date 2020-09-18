@@ -77,9 +77,9 @@ export class Post {
   @JoinTable()
   buyers: User[];
 
-  @Field(() => [Number])
+  @Field(() => [Number], { nullable: true })
   @RelationId((post: Post) => post.buyers)
-  @Column({ type: 'simple-array' })
+  @Column({ type: 'simple-array', nullable: true })
   buyersId: number[];
 
   @Field(() => [Chat], { nullable: true })

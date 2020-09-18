@@ -21,7 +21,7 @@ export class PostService {
 
   async create(userId: number, args: CreatePostInput): Promise<Post> {
     const user = await this.userService.findOneById(userId);
-    return await this.postRepository.save({ user, ...args });
+    return await this.postRepository.save({ seller: user, ...args });
   }
 
   async edit(
