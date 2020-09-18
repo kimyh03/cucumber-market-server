@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreatePostInput } from './dto/create-post.dto';
 import { EditPostInput } from './dto/edit-post.dto';
 import { PostStatusEnum } from './dto/postStatusEnum';
@@ -84,6 +84,12 @@ export class PostService {
   ): Promise<Post[]> {
     return await this.postRepository.find({
       where: { sellerId, status },
+    });
+  }
+
+  async findPurchases(buyerId: number): Promise<Post[]> {
+    return await this.postRepository.find({
+      buyersId: In([buyerId]),
     });
   }
 }

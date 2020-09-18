@@ -77,6 +77,11 @@ export class Post {
   @JoinTable()
   buyers: User[];
 
+  @Field(() => [Number])
+  @RelationId((post: Post) => post.buyers)
+  @Column({ type: 'simple-array' })
+  buyersId: number[];
+
   @Field(() => [Chat], { nullable: true })
   @OneToMany(() => Chat, (chat) => chat.post, { nullable: true })
   chats: Chat[];

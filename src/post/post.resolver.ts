@@ -115,4 +115,14 @@ export class PostResolver {
       throw new Error(error);
     }
   }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Post])
+  async getMyPurchasesList(@currentUser('user') user: User): Promise<Post[]> {
+    try {
+      return await this.postService.findPurchases(user.id);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
