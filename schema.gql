@@ -115,6 +115,7 @@ type Query {
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
   getChatRoomInList(chatId: Float!): Chat!
+  getChatRoomInPost(postId: Float!): Chat!
   getLikedPosts: [Like!]!
   getMyPurchasesList: [Post!]!
   getMySalesList(status: String!): [Post!]!
