@@ -8,6 +8,7 @@ type Chat {
   createdAt: DateTime!
   deals: Deal
   id: ID!
+  isReviewed: Boolean
   messages: [Message!]
   post: Post!
   postId: Float!

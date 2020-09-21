@@ -58,4 +58,7 @@ export class Chat {
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @Field(() => Boolean, { nullable: true })
+  isReviewed?: boolean;
 }
