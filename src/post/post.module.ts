@@ -9,5 +9,6 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Post]), LikeModule, UserModule],
   providers: [PostService, PostResolver],
+  exports: [PostService],
 })
 export class PostModule {}
