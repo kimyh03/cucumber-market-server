@@ -47,12 +47,24 @@ export class PostService {
     }
   }
 
-  async findOneById(id: number): Promise<Post> {
-    const post = await this.postRepository.findOne(id);
-    if (!post) {
-      throw new NotFoundException();
+  async findOneById(id: number, relations?: string[]): Promise<Post> {
+    if (relations === undefined) {
+      const post = await this.postRepository.findOne(id);
+      if (!post) {
+        throw new NotFoundException();
+      } else {
+        return post;
+      }
     } else {
-      return post;
+      const post = await this.postRepository.findOne({
+        where: { id },
+        relations: [...relations],
+      });
+      if (!post) {
+        throw new NotFoundException();
+      } else {
+        return post;
+      }
     }
   }
 

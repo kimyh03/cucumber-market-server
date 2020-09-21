@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   BaseEntity,
+  RelationId,
 } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
@@ -34,6 +35,11 @@ export class Review extends BaseEntity {
   @ManyToOne(() => User, (user) => user.reviewsAsWriter, { nullable: true })
   writer: User;
 
+  @Field(() => Number)
+  @RelationId((review: Review) => review.writer)
+  @Column()
+  writerId: number;
+
   @Field(() => WriterTypeEnum)
   @Column({ type: 'enum', enum: WriterTypeEnum })
   writerType: WriterTypeEnum;
@@ -47,6 +53,11 @@ export class Review extends BaseEntity {
   @Field(() => Post)
   @ManyToOne(() => Post, (post) => post.reviews)
   post: Post;
+
+  @Field(() => Number)
+  @RelationId((review: Review) => review.post)
+  @Column()
+  postId: number;
 
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })

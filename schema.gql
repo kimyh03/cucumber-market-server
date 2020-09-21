@@ -22,6 +22,14 @@ input CreatePostInput {
   title: String!
 }
 
+input createReviewInput {
+  postId: Float!
+  rating: Float!
+  recipientId: Float!
+  text: String!
+  writerType: WriterTypeEnum!
+}
+
 input CreateUserInput {
   password: String!
   username: String!
@@ -64,8 +72,10 @@ type Message {
 
 type Mutation {
   createPost(args: CreatePostInput!): Post!
+  createReview(args: createReviewInput!): Review!
   createUser(args: CreateUserInput!): String!
   deletePost(id: Float!): Boolean!
+  deleteReview(reviewId: Float!): Boolean!
   editPost(args: EditPostInput!, postId: Float!): Post!
   getChatRoomInPost(postId: Float!): Chat!
   removeUser(id: Float!): Boolean!
@@ -123,6 +133,7 @@ type Query {
   getPostDetail(postId: Float!): Post!
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
+  reviews: [Review!]!
   users: [User!]!
   whoAmI: User!
 }
@@ -131,10 +142,12 @@ type Review {
   createdAt: DateTime!
   id: ID!
   post: Post!
+  postId: Float!
   rating: Float!
   recipient: User!
   text: String!
   writer: User
+  writerId: Float!
   writerType: WriterTypeEnum!
 }
 

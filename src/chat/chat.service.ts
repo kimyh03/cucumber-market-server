@@ -75,8 +75,8 @@ export class ChatService {
   }
 
   async getRoom(userId: number, postId: number): Promise<any> {
-    const existChat = await this.isExist(userId, postId);
-    if (existChat) {
+    const isExist = await this.isExist(userId, postId);
+    if (isExist) {
       return await this.findOneByUserIdAndPostId(userId, postId);
     } else {
       await this.create(userId, postId);
