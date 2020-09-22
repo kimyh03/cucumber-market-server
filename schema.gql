@@ -65,10 +65,12 @@ type Like {
 
 type Message {
   chat: Chat!
+  chatId: Float!
   createdAt: DateTime!
   id: ID!
   text: String!
   user: User
+  userId: Float!
 }
 
 type Mutation {
@@ -80,6 +82,7 @@ type Mutation {
   editPost(args: EditPostInput!, postId: Float!): Post!
   getChatRoomInPost(postId: Float!): Chat!
   removeUser(id: Float!): Boolean!
+  sendMessage(chatId: Float!, text: String!): Message!
   setPostStatus(postId: Float!, status: String!): Post!
   setUserLocation(latitude: Float!, longitude: Float!): User!
   toggleLike(postId: Float!): String!
@@ -123,6 +126,7 @@ enum PostStatusEnum {
 }
 
 type Query {
+  AllMessages: [Message!]!
   chats: [Chat!]!
   findAllLikes: [Like!]!
   findAllPosts: [Post!]!
@@ -150,6 +154,10 @@ type Review {
   writer: User
   writerId: Float!
   writerType: WriterTypeEnum!
+}
+
+type Subscription {
+  newMessage: Message!
 }
 
 type User {
