@@ -55,7 +55,7 @@ export class LikeService {
     }
   }
 
-  async findWithPost(userId: number): Promise<Like[]> {
+  async findAllWithPostByUserId(userId: number): Promise<Like[]> {
     return await this.likeRepository.find({
       where: { userId },
       relations: ['post'],

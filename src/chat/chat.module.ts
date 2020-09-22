@@ -19,5 +19,6 @@ import { Review } from 'src/review/review.entity';
     PostService,
     ReviewService,
   ],
+  exports: [ChatService],
 })
 export class ChatModule {}

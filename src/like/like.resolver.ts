@@ -32,7 +32,7 @@ export class LikeResolver {
   @Query(() => [Like])
   async getLikedPosts(@currentUser('user') user: User) {
     try {
-      return await this.likeService.findWithPost(user.id);
+      return await this.likeService.findAllWithPostByUserId(user.id);
     } catch (error) {
       throw new Error(error);
     }

@@ -16,6 +16,7 @@ import { PostModule } from './post/post.module';
 import { LikeModule } from './like/like.module';
 import { ChatModule } from './chat/chat.module';
 import { ReviewModule } from './review/review.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ReviewModule } from './review/review.module';
       autoSchemaFile: 'schema.gql',
       sortSchema: true,
       context: async ({ req }) => req,
+      installSubscriptionHandlers: true,
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -42,6 +44,7 @@ import { ReviewModule } from './review/review.module';
     LikeModule,
     ChatModule,
     ReviewModule,
+    MessageModule,
   ],
   controllers: [AppController],
 })
