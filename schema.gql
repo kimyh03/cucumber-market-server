@@ -95,7 +95,7 @@ type Post {
   category: PostCategoryEnum!
   chats: [Chat!]
   createdAt: DateTime!
-  descrioption: String!
+  description: String!
   id: ID!
   isLiked: Boolean
   likes: [Like!]
@@ -136,6 +136,7 @@ type Query {
   getMyPurchasesList: [Post!]!
   getMySalesList(status: String!): [Post!]!
   getPostDetail(postId: Float!): Post!
+  getPosts(searchPostInput: SearchPostInput!): [Post!]!
   getUserProfile(id: Float!): User!
   logIn(password: String!, username: String!): String!
   reviews: [Review!]!
@@ -154,6 +155,13 @@ type Review {
   writer: User
   writerId: Float!
   writerType: WriterTypeEnum!
+}
+
+input SearchPostInput {
+  categories: [PostCategoryEnum!]!
+  cursor: Float!
+  distance: Float!
+  searchTerm: String!
 }
 
 type Subscription {

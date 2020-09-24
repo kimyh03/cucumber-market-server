@@ -15,6 +15,7 @@ import { LikeService } from 'src/like/like.service';
 import { currentUser } from '../auth/currentUser.decorator';
 import { EditPostInput } from './dto/edit-post.dto';
 import { PostStatusEnum } from './dto/PostStatusEnum';
+import { SearchPostInput } from './dto/search-post.dto';
 
 registerEnumType(PostStatusEnum, {
   name: 'PostStatusEnum',
@@ -35,6 +36,19 @@ export class PostResolver {
   @Mutation(() => Boolean)
   async deletePost(@Args('id') id: number) {
     return await this.postService.delete(id);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Post])
+  async getPosts(
+    @currentUser() user: User,
+    @Args('searchPostInput') searchPostInput: SearchPostInput,
+  ): Promise<Post[]> {
+    try {
+      return await this.postService.findBySearchTerm(user.id, searchPostInput);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Mutation(() => Post)

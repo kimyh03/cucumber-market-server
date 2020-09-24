@@ -49,7 +49,7 @@ export class Post {
 
   @Field()
   @Column()
-  descrioption: string;
+  description: string;
 
   @Field(() => PostStatusEnum)
   @Column({

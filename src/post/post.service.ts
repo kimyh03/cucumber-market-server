@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreatePostInput } from './dto/create-post.dto';
 import { EditPostInput } from './dto/edit-post.dto';
 import { PostStatusEnum } from './dto/postStatusEnum';
 import { UserService } from 'src/user/user.service';
+import { SearchPostInput } from './dto/search-post.dto';
 
 @Injectable()
 export class PostService {
@@ -66,6 +67,44 @@ export class PostService {
         return post;
       }
     }
+  }
+
+  async findBySearchTerm(
+    reqUserId: number,
+    args: SearchPostInput,
+  ): Promise<Post[]> {
+    const { searchTerm, categories, cursor, distance } = args;
+    const { latitude, longitude } = await this.userService.findOneById(
+      reqUserId,
+    );
+    const minlatitude = latitude - distance / 2;
+    const maxlatitude = latitude + distance / 2;
+    const minlongitude = longitude - distance / 2;
+    const maxlongitude = longitude + distance / 2;
+    const LIMIT = 10;
+    const posts = await this.postRepository
+      .createQueryBuilder('post')
+      .innerJoinAndSelect('post.seller', 'user')
+      .where('post.status = :status', { status: PostStatusEnum.OnSale })
+      .andWhere('user.latitude >= :minlatitude', { minlatitude })
+      .andWhere('user.latitude <= :maxlatitude', { maxlatitude })
+      .andWhere('user.longitude >= :minlongitude', { minlongitude })
+      .andWhere('user.longitude <= :maxlongitude', { maxlongitude })
+      .andWhere('post.category IN (:...categories)', { categories })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('post.title LIKE :title', {
+            title: `%${searchTerm}%`,
+          }).orWhere('post.description like :description', {
+            description: `%${searchTerm}%`,
+          });
+        }),
+      )
+      .orderBy('post.id', 'DESC')
+      .andWhere('post.id <= :cursor', { cursor })
+      .limit(LIMIT)
+      .getMany();
+    return posts;
   }
 
   async delete(id: number): Promise<boolean> {
